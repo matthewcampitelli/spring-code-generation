@@ -8,6 +8,7 @@
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'java'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -24,13 +25,16 @@ dependencies {
     implementation 'com.google.guava:guava:21.0'
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
     
     // https://mvnrepository.com/artifact/com.github.jknack/handlebars
 	compile group: 'com.github.jknack', name: 'handlebars', version: '4.1.0'
 
 	compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.google.guava:guava:26.0-jre'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
     
 }
 

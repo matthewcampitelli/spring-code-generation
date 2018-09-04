@@ -1,6 +1,20 @@
-package com.nbt.codegen.generators;
+package com.nbt.codegen.tools;
 
-import com.nbt.codegen.FileSystemUtils;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import com.nbt.codegen.generators.JpaEntityGenerator;
+import com.nbt.codegen.model.EntityDefinition;
+import com.nbt.codegen.repo.EntityRepo;
+import com.nbt.codegen.repo.RepositoryFactory;
+import com.nbt.codegen.template.TemplateEngine;
+import com.nbt.codegen.template.TemplateEngineFactory;
+import com.nbt.codegen.utils.CommandLineArgsParser;
 
 /**
  * Command line utility used to generate Java Source files for JPA entities. 
@@ -10,47 +24,95 @@ import com.nbt.codegen.FileSystemUtils;
  */
 public class CommandLineJpaEntityGenerator {
 
+	private EntityRepo entityRepo = new RepositoryFactory().getRepo();
+	JpaEntityGenerator jpaEntityGenerator = new JpaEntityGenerator();
 	
-	public static void printUsage(){
-		System.out.println("Usage:");
-		System.out.println("	CommandLineEntityGenerator [command]");
-		System.out.println("Where [command] is one of tthe following");
-		System.out.println("	generate-entity [file name] [destination directory]");
-		System.out.println("		Generates a single entity from the specified file.");
-		System.out.println("	generate-entity [directory] [destination directory]");
-		System.out.println("		Generates all entities within the specified directory.");
-		System.out.println("And [destination directory] is an optional argument specifying where artifacts are to be published. Default destination is 'publish'.");
-		
+	String convertNamespaceToDirectoryStructure(String namespace){
+		return namespace.replace(".", "/");
 	}
 	
-	public static void publishEntityArtifact(String[] args)throws Exception{
-		if(args.length<2){
+	Path getTargetDirectory(String rootPublishDir, String namespace){
+		if(namespace==null){
+			return Paths.get(rootPublishDir);
+		}
+		else{
+			return Paths.get(rootPublishDir +"/"+ convertNamespaceToDirectoryStructure(namespace));
+		}
+	}
+
+	public void publishEntityToFileSystem(EntityDefinition entity, String rootPublishDir) throws IOException{
+		String source = jpaEntityGenerator.generateJpaEntitySource(entity);
+		Path targetDirectory = getTargetDirectory(rootPublishDir, entity.getNameSpace());
+		if(!Files.exists(targetDirectory)){
+			Files.createDirectories(targetDirectory);
+		}
+		Path targetFile = Paths.get(targetDirectory.toString() +"/"+ entity.getEntityName() +".java");
+		Files.write(targetFile, source.getBytes());		
+	}
+	
+	public void executeMainRoutine(String destinationDirectory)throws Exception{
+		System.out.println("Please select a project from the list:");
+		List<String> projects = entityRepo.listProjects();
+		for(int x=0;x<projects.size();x++){
+			System.out.println("\t["+ x +"] "+ projects.get(x));
+		}
+		System.out.println("\t [X] Exit");
+		
+		Scanner scanner = new Scanner(System.in);
+		String response = scanner.next();
+		
+		if(response.equalsIgnoreCase("X")){
+			System.out.println("Exiting...");
+			System.exit(1);
+		}
+		
+		String selectedProject = projects.get(Integer.parseInt(response));
+		System.out.println("Please select an available action:");
+		System.out.println("\t[1] Generate all entities");
+		System.out.println("\t[2] Generate a selected entity");
+		
+		int selectedOption = Integer.parseInt(scanner.next());
+		if(selectedOption==1){
+			System.out.println("Generating all entities");
+			List<EntityDefinition>entities = entityRepo.listEntities(selectedProject);
+			for(EntityDefinition entity:entities){
+				publishEntityToFileSystem(entity, destinationDirectory);
+			}
+		}
+		else if(selectedOption==2){
+			System.out.println("Please select an available entity");
+			List<EntityDefinition>entities = entityRepo.listEntities(selectedProject);
+			for(int x=0;x<entities.size();x++){
+				System.out.println("\t["+ x +"] "+ entities.get(x).getUniqueIdentifier());
+			}
+			selectedOption = Integer.parseInt(scanner.next());
 			
+			System.out.println("Generating entity '"+ entities.get(selectedOption).getUniqueIdentifier() +"'");
+			publishEntityToFileSystem(entities.get(selectedOption), destinationDirectory);
 		}
 		
-		String entityJson = FileSystemUtils.loadFileContents(args[1]);
-		if(entityJson==null){
-			throw new Exception("No content present for entity '"+ args[1] +"'.");
-		}
-		
-		
-				
 	}
 	
+	/*
 	public static void publishEntityArtifacts(String[] args)throws Exception{
 		
-	}
+	}*/
 	
+	/*
 	public static void publishJpaRepoArtifact()throws Exception{
 		
-	}
+	}*/
 	
 	public static void main(String[] args){
 		try{
-			if(args.length<1){
-				CommandLineEntityGenerator.printUsage();
-				return;
+			Map<String, String>parsedArgs = CommandLineArgsParser.parseArgs(args);
+			if(!parsedArgs.containsKey("dir")){
+				System.out.println("Please enter a value for output directory (Example: --dir=/path/to/output)");
+				System.exit(0);
 			}
+			CommandLineJpaEntityGenerator generator = new CommandLineJpaEntityGenerator();
+			generator.executeMainRoutine(parsedArgs.get("dir"));
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();

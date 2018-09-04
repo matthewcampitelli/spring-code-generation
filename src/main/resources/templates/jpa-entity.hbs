@@ -1,0 +1,23 @@
+package {{ nameSpace }};
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+/**
+    {{entityName}}.java
+*/
+@Entity
+public static class {{entityName}} {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
+
+    {{#each attributes}}
+    //{{description}}
+    private {{javaAttributeType}} {{attributeName}};
+    {{/each }}
+
+}

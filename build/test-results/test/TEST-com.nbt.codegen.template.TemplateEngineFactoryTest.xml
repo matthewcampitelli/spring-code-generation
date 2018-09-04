@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nbt.codegen.template.TemplateEngineFactoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-09-03T16:27:43" hostname="Matthews-MacBook-Pro-2.local" time="0.01">
+  <properties/>
+  <testcase name="shouldSuccessfullLoadEnginet" classname="com.nbt.codegen.template.TemplateEngineFactoryTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

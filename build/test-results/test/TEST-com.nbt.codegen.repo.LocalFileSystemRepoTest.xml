@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nbt.codegen.repo.LocalFileSystemRepoTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2018-09-03T16:27:43" hostname="Matthews-MacBook-Pro-2.local" time="0.032">
+  <properties/>
+  <testcase name="shouldAssertProjectDirectoryExists" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.003"/>
+  <testcase name="shouldLoadEntityCorrectly" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.005"/>
+  <testcase name="shouldListEntitiesCorrectly" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.012"/>
+  <testcase name="shouldCorrectlyIdentifyIfRepoInitialized" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.001"/>
+  <testcase name="shouldDeleteEntity" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.0"/>
+  <testcase name="shouldPersistExistingEntityFile" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.006"/>
+  <testcase name="shouldInitializeRepoCorrectly" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.002"/>
+  <testcase name="shouldPersistEntityFile" classname="com.nbt.codegen.repo.LocalFileSystemRepoTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
